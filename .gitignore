@@ -1,0 +1,9 @@
+.env
+.env.*
+node_modules
+.next
+/.vercel
+
+# OS cruft
+.DS_Store
+Thumbs.db
