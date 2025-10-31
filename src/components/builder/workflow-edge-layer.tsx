@@ -66,14 +66,18 @@ export function WorkflowEdgeLayer({ nodes, edges, theme }: EdgeLayerProps) {
   );
 }
 
+const CARD_WIDTH = 256;
+const HORIZONTAL_OFFSET = 12;
+const VERTICAL_PADDING = 32;
+
 function buildCurve(
   source: WorkflowNode["position"],
   target: WorkflowNode["position"]
 ) {
-  const sourceX = source.x + 128;
-  const sourceY = source.y + 40;
-  const targetX = target.x + 0;
-  const targetY = target.y + 40;
+  const sourceX = source.x + CARD_WIDTH - HORIZONTAL_OFFSET;
+  const sourceY = source.y + VERTICAL_PADDING;
+  const targetX = target.x + HORIZONTAL_OFFSET;
+  const targetY = target.y + VERTICAL_PADDING;
   const controlOffset = Math.max(Math.abs(targetX - sourceX) * 0.4, 60);
   const control1X = sourceX + controlOffset;
   const control1Y = sourceY;

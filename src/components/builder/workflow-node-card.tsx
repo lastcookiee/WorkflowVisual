@@ -150,12 +150,6 @@ export function WorkflowNodeCard({ node }: NodeCardProps) {
         }
         className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-slate-700 shadow-inner outline-none transition-colors focus:border-indigo-300 focus:text-slate-900 dark:border-white/10 dark:bg-white/10 dark:text-white/80 dark:focus:border-white/40 dark:focus:text-white"
       />
-      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-white/50">
-        <span>Position</span>
-        <span>
-          {Math.round(node.position.x)}, {Math.round(node.position.y)}
-        </span>
-      </div>
       <div className="flex items-center justify-between">
         <Handle side="left" nodeId={node.id} />
         <button
