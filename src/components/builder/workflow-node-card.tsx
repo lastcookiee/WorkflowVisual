@@ -45,26 +45,40 @@ export function WorkflowNodeCard({ node }: NodeCardProps) {
     event.preventDefault();
     setSelectedNode(node.id);
     setDragging(true);
+    const pointerId = event.pointerId;
+    if (typeof card.setPointerCapture === "function") {
+      try {
+        card.setPointerCapture(pointerId);
+      } catch (error) {
+        // Pointer capture can fail on some browsers; ignore silently.
+      }
+    }
 
     const startX = event.clientX;
     const startY = event.clientY;
     const initialX = node.position.x;
     const initialY = node.position.y;
     const container = card.parentElement as HTMLElement | null;
-    const workspacePadding = 24;
-    const cardWidth = card.offsetWidth;
-    const cardHeight = card.offsetHeight;
     const containerWidth = container?.clientWidth ?? Number.POSITIVE_INFINITY;
     const containerHeight = container?.clientHeight ?? Number.POSITIVE_INFINITY;
-    const minX = workspacePadding;
-    const minY = workspacePadding;
+    const dynamicPadding = Number.isFinite(containerWidth)
+      ? Math.max(12, Math.min(28, (containerWidth as number) * 0.05))
+      : 16;
+    const dynamicVerticalPadding = Number.isFinite(containerHeight)
+      ? Math.max(16, Math.min(48, (containerHeight as number) * 0.06))
+      : 24;
+    const cardWidth = card.offsetWidth;
+    const cardHeight = card.offsetHeight;
+    const minX = dynamicPadding;
+    const minY = dynamicVerticalPadding;
     const maxX = Number.isFinite(containerWidth)
-      ? Math.max(minX, containerWidth - cardWidth - workspacePadding)
+      ? Math.max(minX, (containerWidth as number) - cardWidth - dynamicPadding)
       : Number.POSITIVE_INFINITY;
     const maxY = Number.isFinite(containerHeight)
-      ? Math.max(minY, containerHeight - cardHeight - workspacePadding)
+      ? Math.max(minY, (containerHeight as number) - cardHeight - dynamicVerticalPadding)
       : Number.POSITIVE_INFINITY;
-    const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+    const clamp = (value: number, min: number, max: number) =>
+      Number.isFinite(max) ? Math.min(Math.max(value, min), max) : Math.max(value, min);
 
     let frame = 0;
 
@@ -96,6 +110,13 @@ export function WorkflowNodeCard({ node }: NodeCardProps) {
         frame = 0;
       }
       persistDraft();
+      if (typeof card.releasePointerCapture === "function" && card.hasPointerCapture?.(pointerId)) {
+        try {
+          card.releasePointerCapture(pointerId);
+        } catch (error) {
+          // Ignore pointer capture release failures.
+        }
+      }
       window.removeEventListener("pointermove", handleMove);
       window.removeEventListener("pointerup", handleUp);
     };
@@ -125,7 +146,7 @@ export function WorkflowNodeCard({ node }: NodeCardProps) {
       animate={{ scale: isDragging ? 1.02 : 1, opacity: 1 }}
       transition={{ type: "spring", stiffness: 520, damping: 40, mass: 0.35 }}
       onPointerDown={handlePointerDown}
-      className="group absolute flex w-64 cursor-grab select-none flex-col gap-3 rounded-2xl border border-black/10 bg-white/90 p-4 text-slate-700 shadow-lg transition-colors focus:outline-none dark:border-white/10 dark:bg-white/[0.05] dark:text-white"
+      className="group absolute flex w-[9.75rem] cursor-grab select-none touch-none flex-col gap-2 rounded-2xl border border-black/10 bg-white/90 p-3 text-slate-700 shadow-lg transition-colors focus:outline-none dark:border-white/10 dark:bg-white/[0.05] dark:text-white sm:w-[11.5rem] lg:w-64 lg:p-4 sm:touch-auto"
       style={{
         left: node.position.x,
         top: node.position.y,
@@ -133,11 +154,13 @@ export function WorkflowNodeCard({ node }: NodeCardProps) {
       }}
     >
       <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-white/50">{node.kind}</span>
+        <span className="text-[10px] uppercase tracking-[0.3em] text-slate-500 dark:text-white/50">
+          {node.kind}
+        </span>
         <button
           type="button"
           onClick={handleDelete}
-          className="rounded-full border border-black/10 px-2 py-1 text-xs text-slate-500 opacity-0 transition group-hover:opacity-100 hover:border-slate-300 hover:text-slate-900 dark:border-white/10 dark:text-white/50 dark:hover:border-white/40 dark:hover:text-white"
+          className="rounded-full border border-black/10 px-2 py-0.5 text-[10px] text-slate-500 opacity-0 transition group-hover:opacity-100 hover:border-slate-300 hover:text-slate-900 dark:border-white/10 dark:text-white/50 dark:hover:border-white/40 dark:hover:text-white"
         >
           Delete
         </button>
@@ -148,14 +171,14 @@ export function WorkflowNodeCard({ node }: NodeCardProps) {
         onBlur={(event: FocusEvent<HTMLInputElement>) =>
           updateNode(node.id, { label: event.target.value })
         }
-        className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-slate-700 shadow-inner outline-none transition-colors focus:border-indigo-300 focus:text-slate-900 dark:border-white/10 dark:bg-white/10 dark:text-white/80 dark:focus:border-white/40 dark:focus:text-white"
+        className="w-full rounded-xl border border-black/10 bg-white px-2.5 py-1.5 text-xs text-slate-700 shadow-inner outline-none transition-colors focus:border-indigo-300 focus:text-slate-900 touch-auto dark:border-white/10 dark:bg-white/10 dark:text-white/80 dark:focus:border-white/40 dark:focus:text-white lg:text-sm"
       />
       <div className="flex items-center justify-between">
         <Handle side="left" nodeId={node.id} />
         <button
           type="button"
           onClick={handleConnectClick}
-          className="rounded-full border border-black/10 px-3 py-1 text-xs text-slate-600 transition hover:border-indigo-200 hover:text-indigo-700 dark:border-white/10 dark:text-white/70 dark:hover:border-white/40 dark:hover:text-white"
+          className="rounded-full border border-black/10 px-2.5 py-1 text-[10px] text-slate-600 transition hover:border-indigo-200 hover:text-indigo-700 dark:border-white/10 dark:text-white/70 dark:hover:border-white/40 dark:hover:text-white lg:px-3 lg:text-xs"
         >
           {connectSourceId ? "Connect" : "Link"}
         </button>

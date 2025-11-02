@@ -70,13 +70,14 @@ const workflowStore: StateCreator<WorkflowState, [], [], WorkflowState> = (set, 
   },
   addNode: (kind: WorkflowNode["kind"] = "action") => {
     const id = createId();
+    const position = getInitialNodePosition();
     const newNode: WorkflowNode = {
       id,
       label: `${kind.charAt(0).toUpperCase() + kind.slice(1)} Node`,
       kind,
       position: {
-        x: Math.random() * 400 + 120,
-        y: Math.random() * 220 + 120
+        x: position.x,
+        y: position.y
       }
     };
     set((state) => ({ nodes: [...state.nodes, newNode], selectedNodeId: id }));
@@ -155,6 +156,31 @@ const workflowStore: StateCreator<WorkflowState, [], [], WorkflowState> = (set, 
 });
 
 export const useWorkflowStore = create<WorkflowState>(workflowStore);
+
+function getInitialNodePosition(): { x: number; y: number } {
+  if (typeof window === "undefined") {
+    return {
+      x: 180 + Math.random() * 200,
+      y: 160 + Math.random() * 220
+    };
+  }
+
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const horizontalPadding = viewportWidth < 640 ? 24 : 120;
+  const verticalPadding = viewportHeight < 720 ? 96 : 200;
+  const nodeWidth = viewportWidth < 768 ? 150 : viewportWidth < 1280 ? 200 : 240;
+  const nodeHeight = viewportHeight < 768 ? 120 : 160;
+  const maxX = Math.max(horizontalPadding, viewportWidth - nodeWidth - horizontalPadding);
+  const maxY = Math.max(verticalPadding, viewportHeight - nodeHeight - verticalPadding);
+  const rangeX = Math.max(0, maxX - horizontalPadding);
+  const rangeY = Math.max(0, maxY - verticalPadding);
+
+  return {
+    x: horizontalPadding + Math.random() * (rangeX || 1),
+    y: verticalPadding + Math.random() * (rangeY || 1)
+  };
+}
 
 function createId() {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {

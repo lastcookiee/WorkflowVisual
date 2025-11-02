@@ -32,7 +32,7 @@ export const WorkflowCanvas = memo(function WorkflowCanvas() {
 
   return (
     <div
-      className={`relative h-full min-h-[min(900px,80vh)] w-full overflow-hidden rounded-3xl border transition-colors duration-500 ${canvasSkin}`}
+      className={`relative h-full min-h-[60vh] w-full touch-none overflow-hidden rounded-3xl border transition-colors duration-500 sm:min-h-[70vh] sm:touch-auto md:min-h-[min(900px,80vh)] ${canvasSkin}`}
       onPointerDown={handleCanvasClick}
     >
       <BackdropGrid theme={theme} />

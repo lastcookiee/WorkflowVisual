@@ -21,7 +21,7 @@ export function Handle({ side, nodeId }: HandleProps) {
       whileHover={{ scale: 1.12 }}
       whileTap={{ scale: 0.92 }}
       onClick={handleClick}
-      className="relative h-5 w-5 rounded-full border border-black/10 bg-white/70 text-transparent transition hover:border-indigo-200 dark:border-white/10 dark:bg-white/10 dark:hover:border-white/40"
+  className="relative h-4 w-4 rounded-full border border-black/10 bg-white/70 text-transparent transition hover:border-indigo-200 dark:border-white/10 dark:bg-white/10 dark:hover:border-white/40 lg:h-5 lg:w-5"
       aria-label={`${side} handle`}
     >
       <span className="absolute inset-1 rounded-full bg-indigo-200/60 transition dark:bg-white/30" />
