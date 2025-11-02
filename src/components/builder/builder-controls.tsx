@@ -38,8 +38,8 @@ export function BuilderControls() {
   }), [previewPath]);
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-black/10 bg-white/80 px-4 py-4 text-sm text-slate-600 shadow-lg backdrop-blur-md transition-colors dark:border-white/10 dark:bg-white/[0.04] dark:text-white/70 dark:shadow-ambient sm:px-6">
-      <div className="flex flex-wrap gap-2">
+    <div className="flex flex-col gap-5 rounded-2xl border border-black/10 bg-white/80 px-4 py-4 text-sm text-slate-600 shadow-lg backdrop-blur-md transition-colors dark:border-white/10 dark:bg-white/[0.04] dark:text-white/70 dark:shadow-ambient sm:px-6 md:flex-row md:flex-wrap md:items-center md:gap-4">
+      <div className="flex flex-wrap gap-2 md:w-auto">
         {nodeKinds.map((item) => (
           <motion.button
             key={item.kind}
@@ -53,7 +53,7 @@ export function BuilderControls() {
           </motion.button>
         ))}
       </div>
-      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center md:w-auto">
         {traversalModes.map((mode) => {
           const active = traversalMode === mode.value;
           return (
@@ -74,7 +74,7 @@ export function BuilderControls() {
           );
         })}
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:w-auto">
         <motion.button
           type="button"
           whileHover={{ scale: 1.05 }}
@@ -131,7 +131,7 @@ export function BuilderControls() {
           {isPending ? "Saving…" : "Save"}
         </motion.button>
       </div>
-      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-white/50 sm:ml-auto">
+      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-white/50 sm:ml-auto md:ml-auto md:w-auto">
         <span>{stats.totalNodes ? `${stats.totalNodes} nodes` : "No run yet"}</span>
         {stats.lastRun && <span>Last: {stats.lastRun}</span>}
         {statusMessage && <span className="text-slate-600 dark:text-white/60">{statusMessage}</span>}
